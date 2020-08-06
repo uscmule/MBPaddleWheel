@@ -1,6 +1,8 @@
 # MBPaddleWheel
 
 To assemble print this Paddle wheel you will need one (1) tube and two (2) end caps. Clip seperate from end caps are provided for fit testing.
+* MB_end_cap_v3.stl
+* MB_tube_v2.stl
 
 After the parts are assembled they can be glued in place, or simply use pressure fit.
 
