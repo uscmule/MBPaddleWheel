@@ -1,10 +1,27 @@
 
-rotate([0,180,0]) end_cap();
+open_end_cap();
 
-module end_cap() {
-    clip_height = 21;
-    clip_width = 11;
-    clip_depth = 31.3;
+module open_end_cap() {
+cap_radius = 21;
+cap_height = 8.5;
+/*
+translate([70,0,0])
+rotate([0,180,0]) end_cap(cap_radius, cap_height);
+*/
+    
+difference() {
+    translate([0,0,0])
+    rotate([0,180,0]) end_cap(cap_radius, cap_height);
+    
+    translate([0,0,-1])
+    linear_extrude(height = cap_height+2, center = false, convexity = 10, twist = 0) hexagon(cap_radius);
+}
+}
+
+module end_cap(rad, height) {
+    clip_height = rad;
+    clip_width = height;
+    clip_depth = 15;
     clip_wall = 3;
     clip_lip = 5.5;
     clip_lip_slope = 0.80;
@@ -30,8 +47,11 @@ module end_cap() {
     end_clip(clip_depth, clip_width, clip_height, clip_wall, clip_lip, clip_lip_slope);
 
     difference () {
-        rotate([0,180,0]) linear_extrude(height = 11, center = false, convexity = 10, twist = 0) hexagon(radius+clip_wall);
-        translate([0,0,1]) rotate([0,180,0]) linear_extrude(height = 13, center = false, convexity = 10, twist = 0) hexagon(radius);
+        rotate([0,180,0]) linear_extrude(height = clip_width, center = false, convexity = 10, twist = 0) hexagon(radius+clip_wall);
+        /*translate([0,0,1]) rotate([0,180,0]) linear_extrude(height = 13, center = false, convexity = 10, twist = 0) hexagon(radius);*/
+        translate([0,0,1])
+        rotate([0,180,0])
+        cylinder(h = clip_width+20, r1 = 7.5, r2 = 7.5, $fn=36, center = false);
     }
 }
 
@@ -41,35 +61,40 @@ module end_clip(x, y, z, wall, lip, slope) {
     inner_z = z - (2*wall);
     outter_x = x-wall;
     outter_z = z-wall;
+    gap = 8.0;
     
-    rotate([90,-1.4,90])
+    rotate([90,0,90])
     translate([-x/2, y/2-0.1, 0])
+    union() {
     difference() {
         hull() {
-            translate([-outter_x/2, -2,-outter_z/2+(wall/2)]) rotate([90,0,0])
-            dowel(wall, y/2);
-            translate([outter_x/2,0,-outter_z/2]) rotate([90,0,0])
+            translate([-outter_x/2, 0, -outter_z/2+(wall/2)]) rotate([90,0,0])
             dowel(wall, y);
-            translate([-outter_x/2,-2,outter_z/2-(wall/2)]) rotate([90,0,0])
-            dowel(wall, y/2);
-            translate([outter_x/2,0,outter_z/2]) rotate([90,0,0])
+            translate([outter_x/2, 0, -outter_z/2]) rotate([90,0,0])
+            dowel(wall, y);
+            translate([-outter_x/2, 0, outter_z/2-(wall/2)]) rotate([90,0,0])
+            dowel(wall, y);
+            translate([outter_x/2, 0, outter_z/2]) rotate([90,0,0])
             dowel(wall, y);
             }
   
         translate([0, 0, 0])
         cube([inner_x, y, inner_z],center=true);
-        translate([-wall-1,0,0]) cube([inner_x+1,y+wall,inner_z - (2*lip)],center=true);
-        translate([-(x/2 -wall*1.5), -(y+1)/2, ((inner_z - (2*lip))/2)-0.1]) rotate([0,0,90]) prism(y+wall, y, y*slope);
-        translate([-(x/2 - wall*1.5),  (y+1)/2, -((inner_z - (2*lip))/2)+0.1]) rotate([0,180,90]) prism(y+wall, y, y*slope);
+        translate([-wall-1,0,0]) cube([inner_x+1,y+wall, gap],center=true);
+            translate([-inner_x/2, -(y+1)/2, gap/2-0.1]) rotate([0,0,90]) prism(y+wall, y, y*slope);
+        translate([-inner_x/2,  (y+1)/2, -gap/2+0.1]) rotate([0,180,90]) prism(y+wall, y, y*slope);
+        }
+        
     }
+    
 }
 
 module dowel(w,h) {
-    cylinder(h = h-w, r1 = w/2, r2 = w/2, center = true);
+    cylinder(h = h-w, r1 = w/2, r2 = w/2, $fn=36, center = true);
     translate([0,0,(h-w)/2])
-    sphere(d = w);
+    sphere(d = w, $fn=36);
     translate([0,0,-(h-w)/2])
-    sphere(d = w);
+    sphere(d = w, $fn=36);
 }
 
 module prism(l, w, h){
