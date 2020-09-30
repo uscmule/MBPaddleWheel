@@ -1,5 +1,125 @@
 
-open_end_cap();
+//amplified_end_cap();
+
+translate([0,0, 5])
+rotate([0,90,0])
+amp_post();
+
+
+module amplified_end_cap() {
+    cap_radius = 21;
+    cap_height = 8.5;
+    tube_hieght = 83;
+    post_width = 3;
+    post_depth = 6;
+    post_hieght = tube_hieght+cap_height;
+    wall = 3;
+    r = cap_radius + wall;
+    a = r*sqrt(3)/2;
+    
+    difference() {
+        union() {
+            difference() {
+                translate([0,0,0])
+                rotate([0,180,0]) end_cap(cap_radius, cap_height);
+                
+                translate([0,0,-1])
+                linear_extrude(height = cap_height+2, center = false, convexity = 10, twist = 0) hexagon(cap_radius);
+            }
+            
+            translate([r,0,post_hieght/2])
+            rotate([0,0,0])
+            socket(post_depth, post_width, post_hieght);
+            
+            translate([r/2,a,post_hieght/2])
+            rotate([0,0,60])
+            socket(post_depth, post_width, post_hieght);
+            
+            translate([-r/2,a,post_hieght/2])
+            rotate([0,0,120])
+            socket(post_depth, post_width, post_hieght);
+            
+            translate([-r,0,post_hieght/2])
+            rotate([0,0,180])
+            socket(post_depth, post_width, post_hieght);
+            
+            translate([-r/2,-a,post_hieght/2])
+            rotate([0,0,240])
+            socket(post_depth, post_width, post_hieght);
+            
+            translate([r/2,-a,post_hieght/2])
+            rotate([0,0,300])
+            socket(post_depth, post_width, post_hieght);
+        }
+    
+        translate([r,0,4.25])
+        rotate([0,0,0])
+        socket_tool();
+        
+        translate([r/2,a,4.25])
+        rotate([0,0,60])
+        socket_tool();
+        
+        translate([-r/2,a,4.25])
+        rotate([0,0,120])
+        socket_tool();
+        
+        translate([-r,0,4.25])
+        rotate([0,0,180])
+        socket_tool();
+        
+        translate([-r/2,-a,4.25])
+        rotate([0,0,240])
+        socket_tool();
+        
+        translate([r/2,-a,4.25])
+        rotate([0,0,300])
+        translate([0,0,0])
+        socket_tool();
+    }
+    
+    
+}
+
+module amp_post() {
+    buffer = 0.25;
+    height = 83+(8.5*2);
+    linear_extrude(height = height, center = true, convexity = 10, twist = 0)
+    polygon(points=[[5 - buffer,3-buffer], [5-buffer,-3+buffer], [-2+buffer,-1.5+buffer], [-2+buffer,1.5-buffer]]);
+    difference(){
+        translate([-2,0,0])
+        cube([6, 3-(2*buffer), 83], center=true);
+        
+        translate([-24.35,0,0])
+        cylinder(height, 21, 21, center=true, $fn=360);
+    }
+}
+
+module socket_tool() {
+    linear_extrude(height = 10, center = true, convexity = 10, twist = 0)
+    polygon(points=[[5,3], [5,-3], [-2,-1.5], [-2,1.5]]);
+}
+
+module socket(post_depth, post_width, post_hieght) {
+    hull() {
+        
+        //translate([0,0,-post_hieght/2 + 4.25])
+        //linear_extrude(height = 8.5, center = true, convexity = 10, twist = 0)
+        //polygon(points=[[6,4], [6,-4], [-3,-3], [-3,3]]);
+        
+        translate([7.6, 9.5,-post_hieght/2 + 4.25])
+        dowel(2, 8.5);
+        
+        translate([7.6, -9.5,-post_hieght/2 + 4.25])
+        dowel(2, 8.5);
+        
+        translate([-2, -3,-post_hieght/2 + 4.25])
+        dowel(2, 8.5);
+        
+        translate([-2, 3,-post_hieght/2 + 4.25])
+        dowel(2, 8.5);
+    }
+}
 
 module open_end_cap() {
 cap_radius = 21;
@@ -64,7 +184,7 @@ module end_clip(x, y, z, wall, lip, slope) {
     gap = 8.0;
     
     rotate([90,0,90])
-    translate([-x/2, y/2-0.1, 0])
+    translate([-x/2, y/2, 0])
     union() {
     difference() {
         hull() {
@@ -90,11 +210,11 @@ module end_clip(x, y, z, wall, lip, slope) {
 }
 
 module dowel(w,h) {
-    cylinder(h = h-w, r1 = w/2, r2 = w/2, $fn=36, center = true);
-    translate([0,0,(h-w)/2])
+    cylinder(h = h, r1 = w/2, r2 = w/2, $fn=36, center = true);
+    /*translate([0,0,(h-w)/2])
     sphere(d = w, $fn=36);
     translate([0,0,-(h-w)/2])
-    sphere(d = w, $fn=36);
+    sphere(d = w, $fn=36);*/
 }
 
 module prism(l, w, h){

@@ -13,8 +13,8 @@ module tube(){
     shaft_length = 8.5*2;   // length of bottom shaft
     port_offset = 3;     // solid thickness before port openening at top and bottom
     shell_thickness = 2; // wall thickness of tube
-    outter_shell = 20.7; // max radius (fits 21 hex)
-    inner_shell = outter_shell - shell_thickness; // inner radius of hexagon
+    outter_shell = 21; // max radius (fits 21 hex)
+    inner_shell = outter_shell - shell_thickness - 0.3; // inner radius of hexagon
     a = inner_shell;
     height = 83;         // height of tube, not including post
     bushing_length = 8.5*2;
@@ -64,7 +64,7 @@ module tube(){
         }
         // carve out slope to make it printable without support
             translate([0,0,height+shaft_length-port_offset-0.1])
-            cylinder(port_offset*2, inner_shell, inner_shell-shell_thickness*1.6, $fn=360);
+            cylinder(port_offset*2, inner_shell+0.5, inner_shell-shell_thickness*1.6, $fn=360);
         
     }
 
@@ -73,7 +73,7 @@ module tube(){
 
 module port_tool(height, r1, r2, top_offset, side_offset) {
     port_tool_width = r1*2.5; // more than the diameter
-    port_width = r2-2*side_offset;
+    port_width = r2-2*side_offset +5.5;
     port_height = height - top_offset*2;
     
     rotate([0,0,0])
