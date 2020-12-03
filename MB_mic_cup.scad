@@ -3,7 +3,7 @@ sm57b_cup(20.7, 2);
 
 module sm57b_cup(outter_radius, shell_thickness) {
     shaft_length = 9;
-    inner_radius = outter_radius -(shell_thickness*3/2) + 0.155;
+    inner_radius = outter_radius -(shell_thickness*3/2) + 0.245;
     z = 24;
 
     difference(){
