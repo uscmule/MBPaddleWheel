@@ -90,7 +90,7 @@ module amp_post() {
         translate([-2,0,0])
         cube([6, 3-(2*buffer), 83], center=true);
         
-        translate([-24.35,0,0])
+        translate([-24.30,0,0])
         cylinder(height, 21, 21, center=true, $fn=360);
     }
 }
